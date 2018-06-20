@@ -6,7 +6,9 @@ const GRADE_MAX = 1;
 const GRADE_CUTOFF = 0.6;
 const DEFAULT_DIFFICULTY = 0.3;
 
-const clamp = (number, min, max) => Math.min(Math.max(number, min), max);
+const clamp = (number, min, max) => {
+  return Math.min(Math.max(number, min), max);
+};
 
 const calcRecallRate = (reviewedAt, interval, today = new Date()) => {
   const diff = dateUtils.diffDays(today, reviewedAt);
@@ -23,16 +25,19 @@ const calcPercentOverdue = (reviewedAt, interval, today = new Date()) => {
 const calculate = (reviewedAt, prevDifficulty, prevInterval, performanceRating, today) => {
   const percentOverdue = calcPercentOverdue(reviewedAt, prevInterval, today);
 
-  const difficulty = prevDifficulty + (8 - 9 * performanceRating) * percentOverdue / 17;
+  const difficultyDelta = percentOverdue * (1 / 17) * (8 - 9 * performanceRating);
+  const difficulty = clamp(prevDifficulty + difficultyDelta, 0, 1);
 
-  const difficultyWeight = 3 - 1.7 * clamp(difficulty, 0, 1);
+  const difficultyWeight = 3 - 1.7 * difficulty;
 
-  let interval;
+  let intervalDelta;
   if (performanceRating < GRADE_CUTOFF) {
-    interval = Math.round(1 / difficultyWeight ** 2) || 1;
+    intervalDelta = Math.round(1 / difficultyWeight ** 2) || 1;
   } else {
-    interval = 1 + Math.round((difficultyWeight - 1) * percentOverdue);
+    intervalDelta = 1 + Math.round((difficultyWeight - 1) * percentOverdue);
   }
+
+  const interval = prevInterval * intervalDelta;
 
   const nextReviewDate = dateUtils.addDays(today, interval);
 

@@ -27,4 +27,11 @@ describe("dateUtils", () => {
       expect(dateUtils.addDays(today, 14)).to.equalDate(twoWeeksInFuture);
     });
   });
+
+  describe("addDays", () => {
+    it("it should subtract a given number of days from a date", () => {
+      expect(dateUtils.subtractDays(today, 1)).to.equalDate(oneDayAgo);
+      expect(dateUtils.subtractDays(today, 7)).to.equalDate(oneWeekAgo);
+    });
+  });
 });

@@ -1,5 +1,6 @@
 const chai = require("chai");
-const { calcPercentOverdue, calcRecallRate } = require("../src/index");
+const { calculate, calcPercentOverdue, calcRecallRate } = require("../src/index");
+const dateUtils = require("../src/utils/dateUtils");
 const {
   today,
   oneDayAgo,
@@ -49,9 +50,44 @@ const testData = [
   },
 ];
 
+const testDataCalculate = [
+  {
+    reviewedAt: dateUtils.subtractDays(today, 1),
+    performanceRating: 1,
+    difficulty: 0.5,
+    interval: 1,
+    nextDifficulty: 0.44,
+    nextInterval: 2,
+  },
+  {
+    reviewedAt: dateUtils.subtractDays(today, 10),
+    performanceRating: 1,
+    difficulty: 0.5,
+    interval: 5,
+    nextDifficulty: 0.38,
+    nextInterval: 20,
+  },
+  {
+    reviewedAt: dateUtils.subtractDays(today, 18),
+    performanceRating: 0,
+    difficulty: 0.3,
+    interval: 14,
+    nextDifficulty: 0.91,
+    nextInterval: 14,
+  },
+  {
+    reviewedAt: dateUtils.subtractDays(today, 200),
+    performanceRating: 1,
+    difficulty: 0.3,
+    interval: 100,
+    nextDifficulty: 0.18,
+    nextInterval: 400,
+  },
+];
+
 describe("calcRecallRate", () => {
-  testData.forEach(({ reviewedAt, interval, recallRate }, i) => {
-    it(`it should return recall rate - ${i}`, () => {
+  it("it should return recall rate", () => {
+    testData.forEach(({ reviewedAt, interval, recallRate }, i) => {
       const result = calcRecallRate(reviewedAt, interval);
       expect(result).to.equal(recallRate);
     });
@@ -60,13 +96,23 @@ describe("calcRecallRate", () => {
 describe("calcPercentOverdue", () => {
   it("should return the percent overdue for an item reviewed in the past", () => {
     testData.forEach(({ reviewedAt, interval, percentOverdue }) => {
-      const result = calcPercentOverdue(reviewedAt, interval);
-      expect(result).to.equal(percentOverdue);
+      const actual = calcPercentOverdue(reviewedAt, interval);
+      expect(actual).to.equal(percentOverdue);
     });
   });
   it("should return a maximum value of 2", () => {
-    const result = calcPercentOverdue(oneWeekAgo, 1);
-    expect(result).to.equal(2);
+    const actual = calcPercentOverdue(oneWeekAgo, 1);
+    expect(actual).to.equal(2);
   });
 });
-describe("calculate", () => {});
+describe("calculate", () => {
+  it("should calculate the next review data", () => {
+    testDataCalculate.forEach(data => {
+      const { reviewedAt, difficulty, interval, performanceRating } = data;
+      const result = calculate(reviewedAt, difficulty, interval, performanceRating, today);
+      expect(result.reviewedAt).to.equal(today);
+      expect(result.interval).to.equal(data.nextInterval);
+      expect(result.difficulty.toFixed(2)).to.equal(data.nextDifficulty.toString());
+    });
+  });
+});

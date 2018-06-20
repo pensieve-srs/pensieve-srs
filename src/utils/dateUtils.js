@@ -6,6 +6,12 @@ const addDays = (dateA, numDays) => {
   return date;
 };
 
+const subtractDays = (dateA, numDays) => {
+  const date = new Date(dateA);
+  date.setDate(date.getDate() - numDays);
+  return date;
+};
+
 const diffDays = (dateA, dateB) => {
   const utc1 = Date.UTC(dateA.getFullYear(), dateA.getMonth(), dateA.getDate());
   const utc2 = Date.UTC(dateB.getFullYear(), dateB.getMonth(), dateB.getDate());
@@ -15,5 +21,6 @@ const diffDays = (dateA, dateB) => {
 
 module.exports = {
   addDays,
+  subtractDays,
   diffDays,
 };
