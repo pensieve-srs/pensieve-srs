@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-operators */
-const dateUtils = require("./dateUtils");
+const dateUtils = require("./utils/dateUtils");
 
 const GRADE_MIN = 0;
 const GRADE_MAX = 1;
@@ -8,13 +8,13 @@ const DEFAULT_DIFFICULTY = 0.3;
 
 const clamp = (number, min, max) => Math.min(Math.max(number, min), max);
 
-const calcRecallRate = (reviewedAt, interval, today) => {
+const calcRecallRate = (reviewedAt, interval, today = new Date()) => {
   const diff = dateUtils.diffDays(today, reviewedAt);
   const recall = 2 ** (-diff / interval);
   return Math.ceil(recall * 100) / 100;
 };
 
-const calcPercentOverdue = (reviewedAt, interval, today) => {
+const calcPercentOverdue = (reviewedAt, interval, today = new Date()) => {
   const diff = dateUtils.diffDays(today, reviewedAt);
   const calculated = diff / interval;
   return Math.min(2, calculated);

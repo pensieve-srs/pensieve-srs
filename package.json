@@ -2,13 +2,16 @@
   "name": "pensieve-srs",
   "version": "0.1.0",
   "description": "Implementation of the SM2+ spaced repetition algorithm",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-datetime": "^1.5.0",
+    "mocha": "^5.2.0"
+  }
 }
